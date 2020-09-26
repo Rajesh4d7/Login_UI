@@ -19,7 +19,8 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username, password, ipAddress) {
+    login(username, password) {
+        let ipAddress= localStorage.getItem('ipAddress');
         return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password, ipAddress})
         .pipe(map(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -29,19 +30,19 @@ export class AuthenticationService {
         }));
     }
 
-    getIp(username, password) {
-        this.http.get("https://api.ipify.org?format=json").subscribe(resp=>{
-            this.login(username, password, resp['ip']);
-        })
-    }
-
     logout() {
         // remove user from local storage and set current user to null
         let username= JSON.parse(localStorage.getItem('currentUser')).username;
-        return this.http.post<any>(`${config.apiUrl}/logout`, { username })
+        return this.http.post<any>(`${config.apiUrl}/users/logout`, { username })
         .pipe(map(user => {
             localStorage.removeItem('currentUser');
             this.currentUserSubject.next(null);
         }));
+    }
+
+    getIp(){
+        this.http.get("https://api.ipify.org?format=json").subscribe(resp=>{
+            localStorage.setItem( 'ipAddress' , resp['ip']);
+        });
     }
 }

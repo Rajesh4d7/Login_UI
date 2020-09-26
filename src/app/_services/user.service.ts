@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { User } from '@/_models';
+import { User, UserList } from '@/_models';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -16,7 +16,7 @@ export class UserService {
     }
     
     auditList(id) {
-        return this.http.get(`${config.apiUrl}/audit/${id}`);
+        return this.http.get<UserList[]>(`${config.apiUrl}/users/audit/${id}`);
     }
  
     delete(id: number) {
